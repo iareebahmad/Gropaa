@@ -16,24 +16,25 @@ class GroceryApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
+        self.current_mode = "Dark"
+
         # Compact window
         self.title("Gropaa")
         self.geometry("320x420")
         self.resizable(False, False)
 
-        # 🔹 Title bar icon (top-left corner)
+        # 🔹 Title bar icon
         try:
-            # Convert your logo.png to logo.ico for Windows
-            self.iconbitmap("logotitlebar.ico")  # Works reliably on Windows
+            self.iconbitmap("logotitlebar.ico")
         except Exception as e:
             print("⚠️ Could not load title bar icon:", e)
 
-        # 🔹 Logo inside app (top)
+        # 🔹 Logo inside app
         try:
             logo_image = ctk.CTkImage(
                 light_image=Image.open("logo.png"),
                 dark_image=Image.open("logo.png"),
-                size=(48, 48)  # inside-app logo size
+                size=(48, 48)
             )
             self.logo_label = ctk.CTkLabel(self, image=logo_image, text="")
             self.logo_label.pack(pady=(8, 4))
@@ -41,20 +42,21 @@ class GroceryApp(ctk.CTk):
             print("⚠️ Could not load in-app logo:", e)
 
         # Chat area
-        self.chat_frame = ctk.CTkScrollableFrame(self, width=300, height=260, fg_color="#1E1E1E")
+        self.chat_frame = ctk.CTkScrollableFrame(self, width=300, height=260, fg_color=self.get_bg_color())
         self.chat_frame.pack(padx=8, pady=8, fill="both", expand=True)
 
         self.chat_widgets = []
 
         # Input frame
-        self.input_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.input_frame = ctk.CTkFrame(self, fg_color=self.get_bg_color())
         self.input_frame.pack(fill="x", padx=10, pady=(4, 8))
 
         self.input_box = ctk.CTkEntry(
             self.input_frame,
             placeholder_text="Type product...",
             width=200,
-            font=ctk.CTkFont(size=12)
+            font=ctk.CTkFont(size=12),
+            fg_color=self.get_entry_bg()
         )
         self.input_box.pack(side="left", padx=(0, 6), ipady=3)
 
@@ -75,12 +77,29 @@ class GroceryApp(ctk.CTk):
         self.theme_switch.select()
         self.theme_switch.pack(pady=(0, 4))
 
+    def get_bg_color(self):
+        return "#FFFFFF" if self.current_mode == "Light" else "#1E1E1E"
+
+    def get_entry_bg(self):
+        return "#F0F0F0" if self.current_mode == "Light" else "#2E2E2E"
+
     def toggle_theme(self):
-        ctk.set_appearance_mode("Dark" if self.theme_switch.get() == 1 else "Light")
+        self.current_mode = "Dark" if self.theme_switch.get() == 1 else "Light"
+        ctk.set_appearance_mode(self.current_mode)
+
+        # Update chat frame and input frame backgrounds
+        self.chat_frame.configure(fg_color=self.get_bg_color())
+        self.input_frame.configure(fg_color=self.get_bg_color())
+        self.input_box.configure(fg_color=self.get_entry_bg())
+
+        # Update existing chat bubbles
+        for label in self.chat_widgets:
+            # Keep user bubbles green, assistant bubbles adapt
+            if label.cget("fg_color") != BASE_COLOR:
+                label.configure(fg_color=self.get_bg_color())
 
     def add_message(self, sender, message, is_user=False):
-        """Compact chat bubbles"""
-        bubble_color = BASE_COLOR if is_user else "#2E2E2E"
+        bubble_color = BASE_COLOR if is_user else (self.get_bg_color() if self.current_mode == "Light" else "#2E2E2E")
         anchor_side = "e" if is_user else "w"
 
         label = ctk.CTkLabel(
@@ -91,7 +110,7 @@ class GroceryApp(ctk.CTk):
             anchor="w",
             fg_color=bubble_color,
             corner_radius=10,
-            text_color="white",
+            text_color="black" if self.current_mode == "Light" else "white",
             font=ctk.CTkFont(size=11),
             padx=6,
             pady=3
@@ -110,12 +129,10 @@ class GroceryApp(ctk.CTk):
         self.add_message("You", query, is_user=True)
         self.input_box.delete(0, "end")
 
-        # Step 1
         self.add_message("Assistant", f"🌐 Checking Blinkit & Amazon for '{query}'...")
         open_product_urls(query)
         self.add_message("Assistant", "✅ Tabs opened. Waiting...")
 
-        # Step 2
         self.after(2000, self.capture_screenshots)
 
     def capture_screenshots(self):
