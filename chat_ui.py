@@ -18,20 +18,25 @@ class ChatUI:
         self.parent = parent
         self.chat_widgets = []
 
+        # Fonts
+        self.default_font = ctk.CTkFont(family="Calibri", size=13)
+        self.bold_font = ctk.CTkFont(family="Calibri", size=14, weight="bold")
+        self.bubble_font = ctk.CTkFont(family="Calibri", size=13)
+
         # Top frame for Logo, Welcome label, and Home button
         self.top_frame = ctk.CTkFrame(parent, fg_color=BG_COLOR)
-        self.top_frame.pack(fill="x", padx=8, pady=(8,0))
+        self.top_frame.pack(fill="x", padx=8, pady=(8, 0))
 
         # Logo
         try:
             logo_image = ctk.CTkImage(
                 light_image=Image.open("logo.png"),
                 dark_image=Image.open("logo.png"),
-                size=(36,36)
+                size=(36, 36)
             )
             self.logo_label = ctk.CTkLabel(self.top_frame, image=logo_image, text="")
             self.logo_label.image = logo_image  # Keep reference
-            self.logo_label.pack(side="left", padx=(0,8), pady=6)
+            self.logo_label.pack(side="left", padx=(0, 8), pady=6)
         except Exception as e:
             print("⚠️ Logo could not be loaded:", e)
 
@@ -39,7 +44,7 @@ class ChatUI:
         self.welcome_label = ctk.CTkLabel(
             self.top_frame,
             text=f'Welcome, {user_name}!',
-            font=ctk.CTkFont(size=14, weight="bold"),
+            font=self.bold_font,
             fg_color=BG_COLOR,
             text_color="white"
         )
@@ -53,16 +58,18 @@ class ChatUI:
             height=32,
             fg_color=BASE_COLOR,
             hover_color="#059133",
+            font=self.default_font,
             command=self.go_home
         )
-        self.home_button.pack(side="right", padx=(0,8), pady=6)
+        self.home_button.pack(side="right", padx=(0, 8), pady=6)
 
         # Chat frame
         self.chat_frame_main = ctk.CTkFrame(parent, fg_color=BG_COLOR)
-        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=(0,8))
+        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=(0, 8))
 
         self.chat_frame = ctk.CTkScrollableFrame(
-            self.chat_frame_main, width=340, height=320, fg_color=BG_COLOR, corner_radius=12
+            self.chat_frame_main, width=340, height=320,
+            fg_color=BG_COLOR, corner_radius=12
         )
         self.chat_frame.pack(padx=8, pady=8, fill="both", expand=True)
 
@@ -75,9 +82,10 @@ class ChatUI:
             placeholder_text="Type product...",
             width=240,
             fg_color="#3A3A3A",
-            corner_radius=8,
+            corner_radius=12,
             height=32,
             text_color="white",
+            font=self.default_font,
         )
         self.input_box.pack(side="left", padx=(8, 6), pady=6)
 
@@ -89,6 +97,7 @@ class ChatUI:
             fg_color=BASE_COLOR,
             hover_color="#059133",
             corner_radius=16,
+            font=self.default_font,
             command=self.handle_query,
         )
         self.send_button.pack(side="right", padx=(0, 8), pady=6)
@@ -111,6 +120,7 @@ class ChatUI:
             text_color="white",
             padx=8,
             pady=6,
+            font=self.bubble_font,
         )
         label.pack(anchor=anchor_side, pady=4, padx=6)
         self.chat_widgets.append(label)
