@@ -83,12 +83,12 @@ class ChatUI:
 
         self.send_button = ctk.CTkButton(
             self.input_frame,
-            text="Search!",
+            text="Go!",
             width=70,
             height=32,
             fg_color=BASE_COLOR,
             hover_color="#059133",
-            corner_radius=8,
+            corner_radius=16,
             command=self.handle_query,
         )
         self.send_button.pack(side="right", padx=(0, 8), pady=6)

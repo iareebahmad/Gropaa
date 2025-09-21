@@ -53,9 +53,9 @@ def create_login_frame(parent, on_success):
 
     ctk.CTkLabel(frame, text="Welcome to Gropaa", font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(0, 15))
 
-    email_entry = ctk.CTkEntry(frame, placeholder_text="Email", width=220)
+    email_entry = ctk.CTkEntry(frame, placeholder_text="Email", width=220,corner_radius=20 )
     email_entry.pack(pady=(5, 10))
-    password_entry = ctk.CTkEntry(frame, placeholder_text="Password", width=220, show="*")
+    password_entry = ctk.CTkEntry(frame, placeholder_text="Password", width=220, show="*",corner_radius=20 )
     password_entry.pack(pady=(0, 12))
 
     status_label = ctk.CTkLabel(frame, text="", text_color="red")
@@ -81,11 +81,11 @@ def create_login_frame(parent, on_success):
 
     login_btn = ctk.CTkButton(btn_frame, text="Login", width=90,
                               fg_color=BASE_COLOR, hover_color="#059133",
-                              command=handle_login)
+                              command=handle_login,corner_radius=20)
     login_btn.pack(side="left", padx=5)
 
     register_btn = ctk.CTkButton(btn_frame, text="Register", width=90,
-                                 fg_color=BASE_COLOR, hover_color="#059133",
+                                 fg_color=BASE_COLOR, hover_color="#059133",corner_radius=20,
                                  command=lambda: switch_to_register(frame, parent, on_success))
     register_btn.pack(side="right", padx=5)
 
