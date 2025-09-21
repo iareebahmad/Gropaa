@@ -130,6 +130,7 @@ class GroceryApp(ctk.CTk):
         if os.path.exists(amazon_path): os.remove(amazon_path)
         self.add_message("Assistant", "✨ Done!")
 
+
 if __name__ == "__main__":
     app = GroceryApp()
     app.mainloop()
