@@ -7,14 +7,17 @@ from compare import compare_prices
 import time, os
 
 BASE_COLOR = "#06a13f"
+USER_BUBBLE_COLOR = "#06a13f"
+ASSISTANT_BUBBLE_COLOR = "#2E2E2E"
+BG_COLOR = "#1E1E1E"
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("green")
 
+
 class GroceryApp(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.current_mode = "Dark"
         self.geometry("360x500")
         self.resizable(False, False)
         self.title("Gropaa")
@@ -26,59 +29,63 @@ class GroceryApp(ctk.CTk):
             print("⚠️ Could not load title bar icon:", e)
 
         # Chat frame (hidden initially)
-        self.chat_frame_main = ctk.CTkFrame(self, fg_color=self.get_bg_color())
+        self.chat_frame_main = ctk.CTkFrame(self, fg_color=BG_COLOR)
         self.chat_widgets = []
 
-        self.chat_frame = ctk.CTkScrollableFrame(self.chat_frame_main, width=320, height=280, fg_color=self.get_bg_color())
+        self.chat_frame = ctk.CTkScrollableFrame(
+            self.chat_frame_main, width=340, height=320, fg_color=BG_COLOR, corner_radius=12
+        )
         self.chat_frame.pack(padx=8, pady=8, fill="both", expand=True)
 
-        self.input_frame = ctk.CTkFrame(self.chat_frame_main, fg_color=self.get_bg_color())
-        self.input_frame.pack(fill="x", padx=10, pady=(4,8))
+        # Input area
+        self.input_frame = ctk.CTkFrame(self.chat_frame_main, fg_color="#2A2A2A", corner_radius=12)
+        self.input_frame.pack(fill="x", padx=10, pady=(0, 8))
 
-        self.input_box = ctk.CTkEntry(self.input_frame, placeholder_text="Type product...", width=220,
-                                      fg_color=self.get_entry_bg())
-        self.input_box.pack(side="left", padx=(0,6), ipady=3)
+        self.input_box = ctk.CTkEntry(
+            self.input_frame,
+            placeholder_text="Type product...",
+            width=240,
+            fg_color="#3A3A3A",
+            corner_radius=8,
+            height=32,
+            text_color="white",
+        )
+        self.input_box.pack(side="left", padx=(8, 6), pady=6)
 
-        self.send_button = ctk.CTkButton(self.input_frame, text="Search!", width=70, height=32,
-                                         fg_color=BASE_COLOR, hover_color="#059133", command=self.handle_query)
-        self.send_button.pack(side="right")
-
-        # Theme switch
-        self.theme_switch = ctk.CTkSwitch(self, text="🌗", command=self.toggle_theme)
-        self.theme_switch.select()
-        self.theme_switch.place(relx=0.5, rely=0.95, anchor="s")
+        self.send_button = ctk.CTkButton(
+            self.input_frame,
+            text="Search!",
+            width=70,
+            height=32,
+            fg_color=BASE_COLOR,
+            hover_color="#059133",
+            corner_radius=8,
+            command=self.handle_query,
+        )
+        self.send_button.pack(side="right", padx=(0, 8), pady=6)
 
         # Show login frame first
         create_login_frame(self, on_success=self.show_chat_frame)
-
-    def get_bg_color(self):
-        return "#FFFFFF" if self.current_mode=="Light" else "#1E1E1E"
-
-    def get_entry_bg(self):
-        return "#F0F0F0" if self.current_mode=="Light" else "#2E2E2E"
-
-    def toggle_theme(self):
-        self.current_mode = "Dark" if self.theme_switch.get()==1 else "Light"
-        ctk.set_appearance_mode(self.current_mode)
-        self.chat_frame_main.configure(fg_color=self.get_bg_color())
-        self.chat_frame.configure(fg_color=self.get_bg_color())
-        self.input_frame.configure(fg_color=self.get_bg_color())
-        self.input_box.configure(fg_color=self.get_entry_bg())
-        for label in self.chat_widgets:
-            label.configure(fg_color=self.get_bg_color() if label.cget("fg_color")!=BASE_COLOR else BASE_COLOR,
-                            text_color="black" if self.current_mode=="Light" else "white")
 
     # -------------------------
     # Chat functionality
     # -------------------------
     def show_chat_frame(self, name):
         # Welcome message
-        self.welcome_label = ctk.CTkLabel(self, text=f'Welcome to Gropaa "{name}"', anchor="e")
-        self.welcome_label.place(relx=0.95, rely=0.05, anchor="ne")
-        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=8)
+        self.welcome_label = ctk.CTkLabel(
+            self,
+            text=f'Welcome to Gropaa, {name}!',
+            font=ctk.CTkFont(size=14, weight="bold"),
+            fg_color=BG_COLOR,
+            corner_radius=8,
+            pady=6,
+            padx=8,
+        )
+        self.welcome_label.place(relx=0.5, rely=0.03, anchor="n")
+        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=50)
 
     def add_message(self, sender, message, is_user=False):
-        bubble_color = BASE_COLOR if is_user else (self.get_bg_color() if self.current_mode=="Light" else "#2E2E2E")
+        bubble_color = USER_BUBBLE_COLOR if is_user else ASSISTANT_BUBBLE_COLOR
         anchor_side = "e" if is_user else "w"
 
         label = ctk.CTkLabel(
@@ -88,12 +95,12 @@ class GroceryApp(ctk.CTk):
             justify="left",
             anchor="w",
             fg_color=bubble_color,
-            corner_radius=10,
-            text_color="black" if self.current_mode=="Light" else "white",
-            padx=6,
-            pady=3
+            corner_radius=12,
+            text_color="white",
+            padx=8,
+            pady=6,
         )
-        label.pack(anchor=anchor_side, pady=3, padx=6)
+        label.pack(anchor=anchor_side, pady=4, padx=6)
         self.chat_widgets.append(label)
         self.chat_frame._parent_canvas.yview_moveto(1.0)
 
