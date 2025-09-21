@@ -51,8 +51,11 @@ class GroceryApp(ctk.CTk):
         # Show login frame first
         create_login_frame(self, on_success=self.show_chat_frame)
 
-    def get_bg_color(self): return "#FFFFFF" if self.current_mode=="Light" else "#1E1E1E"
-    def get_entry_bg(self): return "#F0F0F0" if self.current_mode=="Light" else "#2E2E2E"
+    def get_bg_color(self):
+        return "#FFFFFF" if self.current_mode=="Light" else "#1E1E1E"
+
+    def get_entry_bg(self):
+        return "#F0F0F0" if self.current_mode=="Light" else "#2E2E2E"
 
     def toggle_theme(self):
         self.current_mode = "Dark" if self.theme_switch.get()==1 else "Light"
@@ -68,7 +71,10 @@ class GroceryApp(ctk.CTk):
     # -------------------------
     # Chat functionality
     # -------------------------
-    def show_chat_frame(self):
+    def show_chat_frame(self, name):
+        # Welcome message
+        self.welcome_label = ctk.CTkLabel(self, text=f'Welcome to Gropaa "{name}"', anchor="e")
+        self.welcome_label.place(relx=0.95, rely=0.05, anchor="ne")
         self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=8)
 
     def add_message(self, sender, message, is_user=False):
@@ -96,11 +102,17 @@ class GroceryApp(ctk.CTk):
         if not query:
             self.add_message("Assistant", "❌ Please enter a product name.")
             return
+
+        # Show user's query
         self.add_message("You", query, is_user=True)
         self.input_box.delete(0, "end")
+
+        # Assistant responses
         self.add_message("Assistant", f"🌐 Checking Blinkit & Amazon for '{query}'...")
         open_product_urls(query)
         self.add_message("Assistant", "✅ Tabs opened. Waiting...")
+
+        # Delay for screenshot capture
         self.after(2000, self.capture_screenshots)
 
     def capture_screenshots(self):
@@ -112,10 +124,11 @@ class GroceryApp(ctk.CTk):
         self.add_message("Assistant", "🔍 Comparing prices...")
         result = compare_prices(blinkit_path, amazon_path)
         self.add_message("Assistant", f"📊 {result}")
+
+        # Clean up temporary screenshots
         if os.path.exists(blinkit_path): os.remove(blinkit_path)
         if os.path.exists(amazon_path): os.remove(amazon_path)
         self.add_message("Assistant", "✨ Done!")
-
 
 if __name__ == "__main__":
     app = GroceryApp()
