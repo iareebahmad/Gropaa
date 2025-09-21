@@ -82,6 +82,6 @@ def create_register_frame(parent, on_success):
                               command=lambda: switch_to_login(frame, parent, on_success))
     login_btn.pack(side="right", padx=5)
 
-    ctk.CTkLabel(frame, text="Made with ❤️ for India", font=ctk.CTkFont(size=12), text_color="gray").pack(side="bottom", pady=(10,5))
+    ctk.CTkLabel(frame, text="Made with ♡ for India", font=ctk.CTkFont(size=12), text_color="gray").pack(side="bottom", pady=(10,5))
 
     return frame

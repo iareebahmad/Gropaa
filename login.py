@@ -89,7 +89,7 @@ def create_login_frame(parent, on_success):
                                  command=lambda: switch_to_register(frame, parent, on_success))
     register_btn.pack(side="right", padx=5)
 
-    ctk.CTkLabel(frame, text="Made with ❤️ for India", font=ctk.CTkFont(size=12),
+    ctk.CTkLabel(frame, text="Made with ♡ for India", font=ctk.CTkFont(size=12),
                  text_color="gray").pack(side="bottom", pady=(10, 5))
 
     return frame
