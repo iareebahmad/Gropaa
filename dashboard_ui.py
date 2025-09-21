@@ -15,38 +15,50 @@ class DashboardUI:
         self.main_frame = ctk.CTkFrame(parent, fg_color=BG_COLOR)
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Top frame with title and back button
+        # Top frame with back button
         self.top_frame = ctk.CTkFrame(self.main_frame, fg_color=BG_COLOR)
         self.top_frame.pack(fill="x", pady=(0, 10))
 
-        # Title
-        self.title_label = ctk.CTkLabel(
-            self.top_frame,
-            text=f"{user_name}'s Dashboard",
-            font=ctk.CTkFont(size=20, weight="bold"),
-            text_color="white"
-        )
-        self.title_label.pack(side="left", padx=(10, 20))
+        # Modern circular back button
+        try:
+            arrow_img = ctk.CTkImage(
+                light_image=Image.open("back_arrow.png"),
+                dark_image=Image.open("back_arrow.png"),
+                size=(22, 22)
+            )
+            self.back_button = ctk.CTkButton(
+                self.top_frame,
+                text="",
+                image=arrow_img,
+                width=45,
+                height=45,
+                fg_color=CARD_COLOR,
+                hover_color=BASE_COLOR,
+                corner_radius=22,  # circular
+                command=self.go_back
+            )
+            self.back_button.image = arrow_img
+            self.back_button.pack(side="left", padx=10, pady=5)
+        except Exception as e:
+            print("⚠️ Back icon missing, fallback to text:", e)
+            self.back_button = ctk.CTkButton(
+                self.top_frame,
+                text="←",
+                width=45,
+                height=45,
+                fg_color=CARD_COLOR,
+                hover_color=BASE_COLOR,
+                corner_radius=22,
+                font=ctk.CTkFont(size=18, weight="bold"),
+                command=self.go_back
+            )
+            self.back_button.pack(side="left", padx=10, pady=5)
 
-        # Back button (top-right)
-        self.back_button = ctk.CTkButton(
-            self.top_frame,
-            text="← Back",
-            width=70,
-            height=28,
-            fg_color=BASE_COLOR,
-            hover_color="#059133",
-            corner_radius=6,
-            font=ctk.CTkFont(size=12, weight="bold"),
-            command=self.go_back
-        )
-        self.back_button.pack(side="right", padx=5, pady=5)
-
-        # Content frame
+        # Content frame for logo + buttons
         self.content_frame = ctk.CTkFrame(self.main_frame, fg_color=BG_COLOR)
-        self.content_frame.pack(fill="both", expand=True, pady=20)
+        self.content_frame.pack(fill="both", expand=False, pady=10)
 
-        # Center logo below title
+        # Logo at the top
         try:
             logo_image = ctk.CTkImage(
                 light_image=Image.open("logo.png"),
@@ -59,12 +71,12 @@ class DashboardUI:
         except Exception as e:
             print("⚠️ Logo could not be loaded:", e)
 
-        # Cards
+        # Cards (buttons) immediately below logo
         self.create_card("👤 My Profile & Info", self.my_profile)
         self.create_card("📜 Order History", self.order_history)
         self.create_card("🚪 Logout", self.logout)
 
-        # Footer
+        # Footer at the bottom
         footer = ctk.CTkLabel(
             self.main_frame,
             text="Made with ♡ for India",
@@ -104,7 +116,7 @@ class DashboardUI:
         self.main_frame.destroy()
 
     # -------------------------
-    # Back navigation (late import to avoid circular import)
+    # Back navigation
     # -------------------------
     def go_back(self):
         self.main_frame.destroy()
