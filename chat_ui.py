@@ -4,6 +4,7 @@ from browser import open_product_urls
 from capture import take_screenshot
 from compare import compare_prices
 import time, os
+from dashboard_ui import DashboardUI  # Import dashboard for navigation
 
 BASE_COLOR = "#06a13f"
 USER_BUBBLE_COLOR = "#06a13f"
@@ -16,8 +17,35 @@ class ChatUI:
         self.parent = parent
         self.chat_widgets = []
 
+        # Top frame for Home button and welcome
+        self.top_frame = ctk.CTkFrame(parent, fg_color=BG_COLOR)
+        self.top_frame.pack(fill="x", padx=8, pady=(8,0))
+
+        # Home button
+        self.home_button = ctk.CTkButton(
+            self.top_frame,
+            text="🏠",
+            width=40,
+            height=32,
+            fg_color=BASE_COLOR,
+            hover_color="#059133",
+            command=self.go_home
+        )
+        self.home_button.pack(side="left", padx=(0,8), pady=6)
+
+        # Welcome label
+        self.welcome_label = ctk.CTkLabel(
+            self.top_frame,
+            text=f'Welcome, {user_name}!',
+            font=ctk.CTkFont(size=14, weight="bold"),
+            fg_color=BG_COLOR,
+            text_color="white"
+        )
+        self.welcome_label.pack(side="left", padx=4, pady=6)
+
         # Chat frame
         self.chat_frame_main = ctk.CTkFrame(parent, fg_color=BG_COLOR)
+        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=(0,8))
 
         self.chat_frame = ctk.CTkScrollableFrame(
             self.chat_frame_main, width=340, height=320, fg_color=BG_COLOR, corner_radius=12
@@ -50,21 +78,6 @@ class ChatUI:
             command=self.handle_query,
         )
         self.send_button.pack(side="right", padx=(0, 8), pady=6)
-
-        # Welcome label
-        self.welcome_label = ctk.CTkLabel(
-            parent,
-            text=f'Welcome to Gropaa, {user_name}!',
-            font=ctk.CTkFont(size=14, weight="bold"),
-            fg_color=BG_COLOR,
-            corner_radius=8,
-            pady=6,
-            padx=8,
-        )
-        self.welcome_label.place(relx=0.5, rely=0.03, anchor="n")
-
-        # Pack chat main frame
-        self.chat_frame_main.pack(fill="both", expand=True, padx=8, pady=50)
 
     # -------------------------
     # Chat functions
@@ -114,7 +127,16 @@ class ChatUI:
         result = compare_prices(blinkit_path, amazon_path)
         self.add_message("Assistant", f"📊 {result}")
 
-        # Clean up temporary screenshots
         if os.path.exists(blinkit_path): os.remove(blinkit_path)
         if os.path.exists(amazon_path): os.remove(amazon_path)
         self.add_message("Assistant", "✨ Done!")
+
+    # -------------------------
+    # Navigation
+    # -------------------------
+    def go_home(self):
+        # Destroy chat UI
+        self.top_frame.destroy()
+        self.chat_frame_main.destroy()
+        # Open dashboard
+        DashboardUI(self.parent)
