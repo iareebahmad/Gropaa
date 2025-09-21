@@ -39,7 +39,7 @@ class GroceryApp(ctk.CTk):
                                       fg_color=self.get_entry_bg())
         self.input_box.pack(side="left", padx=(0,6), ipady=3)
 
-        self.send_button = ctk.CTkButton(self.input_frame, text="Go", width=70, height=32,
+        self.send_button = ctk.CTkButton(self.input_frame, text="Search!", width=70, height=32,
                                          fg_color=BASE_COLOR, hover_color="#059133", command=self.handle_query)
         self.send_button.pack(side="right")
 
