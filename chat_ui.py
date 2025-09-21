@@ -3,8 +3,9 @@ import customtkinter as ctk
 from browser import open_product_urls
 from capture import take_screenshot
 from compare import compare_prices
-import time, os
 from dashboard_ui import DashboardUI  # Import dashboard for navigation
+from PIL import Image
+import time, os
 
 BASE_COLOR = "#06a13f"
 USER_BUBBLE_COLOR = "#06a13f"
@@ -17,21 +18,22 @@ class ChatUI:
         self.parent = parent
         self.chat_widgets = []
 
-        # Top frame for Home button and welcome
+        # Top frame for Logo, Welcome label, and Home button
         self.top_frame = ctk.CTkFrame(parent, fg_color=BG_COLOR)
         self.top_frame.pack(fill="x", padx=8, pady=(8,0))
 
-        # Home button
-        self.home_button = ctk.CTkButton(
-            self.top_frame,
-            text="🏠",
-            width=40,
-            height=32,
-            fg_color=BASE_COLOR,
-            hover_color="#059133",
-            command=self.go_home
-        )
-        self.home_button.pack(side="left", padx=(0,8), pady=6)
+        # Logo
+        try:
+            logo_image = ctk.CTkImage(
+                light_image=Image.open("logo.png"),
+                dark_image=Image.open("logo.png"),
+                size=(36,36)
+            )
+            self.logo_label = ctk.CTkLabel(self.top_frame, image=logo_image, text="")
+            self.logo_label.image = logo_image  # Keep reference
+            self.logo_label.pack(side="left", padx=(0,8), pady=6)
+        except Exception as e:
+            print("⚠️ Logo could not be loaded:", e)
 
         # Welcome label
         self.welcome_label = ctk.CTkLabel(
@@ -42,6 +44,18 @@ class ChatUI:
             text_color="white"
         )
         self.welcome_label.pack(side="left", padx=4, pady=6)
+
+        # Home button on the far right
+        self.home_button = ctk.CTkButton(
+            self.top_frame,
+            text="🏠",
+            width=40,
+            height=32,
+            fg_color=BASE_COLOR,
+            hover_color="#059133",
+            command=self.go_home
+        )
+        self.home_button.pack(side="right", padx=(0,8), pady=6)
 
         # Chat frame
         self.chat_frame_main = ctk.CTkFrame(parent, fg_color=BG_COLOR)
