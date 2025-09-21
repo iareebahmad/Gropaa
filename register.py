@@ -39,13 +39,13 @@ def create_register_frame(parent, on_success):
 
     ctk.CTkLabel(frame, text="Create your account", font=ctk.CTkFont(size=16, weight="bold")).pack(pady=(0,10))
 
-    name_entry = ctk.CTkEntry(frame, placeholder_text="Full Name", width=220)
+    name_entry = ctk.CTkEntry(frame, placeholder_text="Full Name", width=220,corner_radius=16)
     name_entry.pack(pady=(5,8))
-    email_entry = ctk.CTkEntry(frame, placeholder_text="Email", width=220)
+    email_entry = ctk.CTkEntry(frame, placeholder_text="Email", width=220,corner_radius=16)
     email_entry.pack(pady=(5,8))
-    password_entry = ctk.CTkEntry(frame, placeholder_text="Password", width=220, show="*")
+    password_entry = ctk.CTkEntry(frame, placeholder_text="Password", width=220, show="*",corner_radius=16)
     password_entry.pack(pady=(5,8))
-    confirm_entry = ctk.CTkEntry(frame, placeholder_text="Re-enter Password", width=220, show="*")
+    confirm_entry = ctk.CTkEntry(frame, placeholder_text="Re-enter Password", width=220, show="*",corner_radius=16)
     confirm_entry.pack(pady=(5,12))
 
     status_label = ctk.CTkLabel(frame, text="", text_color="red")
@@ -73,12 +73,12 @@ def create_register_frame(parent, on_success):
             switch_to_login(frame, parent, on_success)
 
     reg_btn = ctk.CTkButton(btn_frame, text="Register", width=90,
-                             fg_color=BASE_COLOR, hover_color="#059133",
+                             fg_color=BASE_COLOR, hover_color="#059133",corner_radius=16,
                              command=handle_register)
     reg_btn.pack(side="left", padx=5)
 
     login_btn = ctk.CTkButton(btn_frame, text="Back to Login", width=90,
-                              fg_color=BASE_COLOR, hover_color="#059133",
+                              fg_color=BASE_COLOR, hover_color="#059133",corner_radius=16,
                               command=lambda: switch_to_login(frame, parent, on_success))
     login_btn.pack(side="right", padx=5)
 
