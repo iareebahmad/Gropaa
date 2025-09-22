@@ -5,7 +5,7 @@ from capture import take_screenshot
 from compare import compare_prices
 from dashboard_ui import DashboardUI  # Import dashboard for navigation
 from PIL import Image
-import time, os
+import os
 
 BASE_COLOR = "#06a13f"
 USER_BUBBLE_COLOR = "#06a13f"
@@ -24,11 +24,10 @@ class ChatUI:
         self.bold_font = ctk.CTkFont(family="Calibri", size=14, weight="bold")
         self.bubble_font = ctk.CTkFont(family="Calibri", size=13)
 
-        # Top frame for Logo, Welcome label, and Home button
+        # Top frame: Logo, Welcome, Home
         self.top_frame = ctk.CTkFrame(parent, fg_color=BG_COLOR)
         self.top_frame.pack(fill="x", padx=8, pady=(8, 0))
 
-        # Logo
         try:
             logo_image = ctk.CTkImage(
                 light_image=Image.open("logo.png"),
@@ -36,12 +35,11 @@ class ChatUI:
                 size=(36, 36)
             )
             self.logo_label = ctk.CTkLabel(self.top_frame, image=logo_image, text="")
-            self.logo_label.image = logo_image  # Keep reference
+            self.logo_label.image = logo_image
             self.logo_label.pack(side="left", padx=(0, 8), pady=6)
         except Exception as e:
             print("⚠️ Logo could not be loaded:", e)
 
-        # Welcome label
         self.welcome_label = ctk.CTkLabel(
             self.top_frame,
             text=f'Welcome, {user_name}!',
@@ -51,7 +49,6 @@ class ChatUI:
         )
         self.welcome_label.pack(side="left", padx=4, pady=6)
 
-        # Home button on the far right
         self.home_button = ctk.CTkButton(
             self.top_frame,
             text="🏠",
@@ -175,7 +172,13 @@ class ChatUI:
         # Step 3: Compare prices
         self.add_message("Assistant", "🔍 Comparing prices...")
         result = compare_prices(self.blinkit_path, amazon_path)
-        self.add_message("Assistant", f"📊 {result}")
+
+        # Display platform-wise lowest price
+        self.add_message("Assistant", f"🟢 Blinkit: {result['blinkit']}")
+        self.add_message("Assistant", f"🟢 Amazon Fresh: {result['amazon']}")
+
+        # Display overall lowest
+        self.add_message("Assistant", f"📊 {result['overall']}")
 
         # Cleanup
         if os.path.exists(self.blinkit_path): os.remove(self.blinkit_path)
@@ -186,8 +189,6 @@ class ChatUI:
     # Navigation
     # -------------------------
     def go_home(self):
-        # Destroy chat UI
         self.top_frame.destroy()
         self.chat_frame_main.destroy()
-        # Open dashboard
         DashboardUI(self.parent)
