@@ -17,6 +17,7 @@ class ChatUI:
     def __init__(self, parent, user_name):
         self.parent = parent
         self.chat_widgets = []
+        self.blinkit_path = None
 
         # Fonts
         self.default_font = ctk.CTkFont(family="Calibri", size=13)
@@ -137,21 +138,47 @@ class ChatUI:
 
         self.add_message("Assistant", f"🌐 Checking Blinkit & Amazon for '{query}'...")
         open_product_urls(query)
-        self.add_message("Assistant", "✅ Tabs opened. Waiting...")
+        self.add_message("Assistant", "✅ Tabs opened.")
 
-        self.parent.after(2000, self.capture_screenshots)
+        # Step 1: Ask user to confirm Blinkit screenshot
+        self.add_message("Assistant", "🟢 Switch to Blinkit tab, then press 'Capture Blinkit'.")
+        btn1 = ctk.CTkButton(
+            self.chat_frame,
+            text="Capture Blinkit",
+            fg_color=BASE_COLOR,
+            hover_color="#059133",
+            command=lambda: self.capture_blinkit(btn1)
+        )
+        btn1.pack(anchor="w", pady=4, padx=6)
 
-    def capture_screenshots(self):
+    def capture_blinkit(self, btn):
+        btn.destroy()
         self.add_message("Assistant", "📸 Capturing Blinkit...")
-        blinkit_path = take_screenshot("blinkit.png")
+        self.blinkit_path = take_screenshot("blinkit.png")
+
+        # Step 2: Ask user to confirm Amazon screenshot
+        self.add_message("Assistant", "🟢 Now switch to Amazon tab, then press 'Capture Amazon'.")
+        btn2 = ctk.CTkButton(
+            self.chat_frame,
+            text="Capture Amazon",
+            fg_color=BASE_COLOR,
+            hover_color="#059133",
+            command=lambda: self.capture_amazon(btn2)
+        )
+        btn2.pack(anchor="w", pady=4, padx=6)
+
+    def capture_amazon(self, btn):
+        btn.destroy()
         self.add_message("Assistant", "📸 Capturing Amazon...")
         amazon_path = take_screenshot("amazon.png")
-        time.sleep(1)
+
+        # Step 3: Compare prices
         self.add_message("Assistant", "🔍 Comparing prices...")
-        result = compare_prices(blinkit_path, amazon_path)
+        result = compare_prices(self.blinkit_path, amazon_path)
         self.add_message("Assistant", f"📊 {result}")
 
-        if os.path.exists(blinkit_path): os.remove(blinkit_path)
+        # Cleanup
+        if os.path.exists(self.blinkit_path): os.remove(self.blinkit_path)
         if os.path.exists(amazon_path): os.remove(amazon_path)
         self.add_message("Assistant", "✨ Done!")
 
